@@ -13,8 +13,8 @@ sapply(packages, require, character.only=TRUE, quietly=TRUE)
 SubjectTrain <- read.csv("./data/samsung/UCI HAR Dataset/train/subject_train.txt",sep="",header=FALSE)
 SubjectTest <- read.csv("./data/samsung/UCI HAR Dataset/test/subject_test.txt",sep="",header=FALSE)
 
-# 3. Uses descriptive activity names to name the activities in the data set
-# 4. Appropriately labels the data set with descriptive activity names. 
+### 3. Uses descriptive activity names to name the activities in the data set
+### 4. Appropriately labels the data set with descriptive activity names. 
 
 colnames(SubjectTrain)  <- "subject"
 colnames(SubjectTest)  <- "subject"
@@ -28,8 +28,8 @@ XTest <- read.csv("./data/samsung/UCI HAR Dataset/test/X_test.txt",sep="",header
 
 ## Replacing heading with more descriptive terms
 
-# 3. Uses descriptive activity names to name the activities in the data set
-# 4. Appropriately labels the data set with descriptive activity names. 
+### 3. Uses descriptive activity names to name the activities in the data set
+### 4. Appropriately labels the data set with descriptive activity names. 
 
 colnames(YTest)  <- 'activity_labels'
 colnames(YTrain)  <- 'activity_labels'
@@ -52,13 +52,13 @@ features <- features[,2]
 
 ## Extracting mean and standard deviation from the data
 
-# 2. Extracts only the measurements on the mean and standard deviation for each measurement. 
+### 2. Extracts only the measurements on the mean and standard deviation for each measurement. 
 
 Data  <- subset(Data,select = grepl("mean|std",features))
 
 write.table(Data, file="tidyDataset.txt",sep='\t',row.names=FALSE)
 
-# 1. Merges the training and the test sets to create one data set.
+### 1. Merges the training and the test sets to create one data set.
 
 testData <- cbind(testData, subjectTest)
 trainData <- cbind(trainData, subjectTrain)
@@ -67,7 +67,7 @@ Data1 <- rbind(testData, trainData)
 
 ## Creating tidy data for submission
 
-# 5. Creates a second, independent tidy data set with the average of each variable for each activity and each subject. 
+### 5. Creates a second, independent tidy data set with the average of each variable for each activity and each subject. 
 
 tidyDataset2  <- aggregate( Data1[,1:562], Data1[,563:564], FUN = mean )
 
