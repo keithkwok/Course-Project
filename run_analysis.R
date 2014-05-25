@@ -5,50 +5,45 @@
 packages <- c("data.table", "reshape2")
 sapply(packages, require, character.only=TRUE, quietly=TRUE)
 
-dtSubjectTrain <- read.table("./data/samsung/UCI HAR Dataset/train/subject_train.txt")
-dtSubjectTest <- read.table("./data/samsung/UCI HAR Dataset/test/subject_test.txt")
+SubjectTrain <- read.csv("./data/samsung/UCI HAR Dataset/train/subject_train.txt",sep="",header=FALSE)
+SubjectTest <- read.csv("./data/samsung/UCI HAR Dataset/test/subject_test.txt",sep="",header=FALSE)
 
-dtYTrain <- read.table("./data/samsung/UCI HAR Dataset/train/y_train.txt")
-dtYTest <- read.table("./data/samsung/UCI HAR Dataset/test/y_test.txt")
+colnames(SubjectTrain)  <- "subject"
+colnames(SubjectTest)  <- "subject"
 
-dtXTrain <- data.table(read.table("./data/samsung/UCI HAR Dataset/train/X_train.txt"))
-dtXTest <- data.table(read.table("./data/samsung/UCI HAR Dataset/test/X_test.txt"))
+YTrain <- read.csv("./data/samsung/UCI HAR Dataset/train/y_train.txt",sep="",header=FALSE)
+YTest <- read.csv("./data/samsung/UCI HAR Dataset/test/y_test.txt",sep="",header=FALSE)
 
-#join the x files
+XTrain <- read.csv("./data/samsung/UCI HAR Dataset/train/X_train.txt",sep="",header=FALSE)
+XTest <- read.csv("./data/samsung/UCI HAR Dataset/test/X_test.txt",sep="",header=FALSE)
 
-dtX <- rbind(dtXTrain, dtXTest)
+colnames(YTest)  <- 'activity_labels'
+colnames(YTrain)  <- 'activity_labels'
 
-#join the y files
+activity_labels  <- read.csv("./data/samsung/UCI HAR Dataset/activity_labels.txt",sep="",header=FALSE)
+colnames(activity_labels)  <- c('activity_label','activity')
 
-dtY <- rbind(dtYTrain, dtYTest)
-setnames(dtY, "V1", "activityNum")
+activityTest  <- merge(YTest, activity_labels)
+activityTrain  <- merge(YTrain, activity_labels)
 
-#join the subject files
+testData  <- cbind(XTest, activityTest)
+trainData  <- cbind(XTrain, activityTrain)
 
-dtSubject <- rbind(dtSubjectTrain, dtSubjectTest)
-setnames(dtSubject, "V1", "subject")
+Data <- rbind(testData, trainData)
 
-#cbind all 3 cols, subject + x + y
+features <- read.csv("./data/samsung/UCI HAR Dataset/features.txt", sep="", header=FALSE)
+features <- features[,2]
 
-dtSubject <- cbind(dtSubject, dtX)
-dt <- cbind(dtSubject, dtY)
+Data  <- subset(Data,select = grepl("mean|std",features))
 
-data.table(dt)
-setkey(dt, subject, activityNum)
+write.table(Data, file="tidyDataset.txt",sep='\t',row.names=FALSE)
 
-dtFeatures <- read.table("./data/samsung/UCI HAR Dataset/features.txt")
+testData <- cbind(testData, subjectTest)
+trainData <- cbind(trainData, subjectTrain)
 
-setnames(dtFeatures, names(dtFeatures), c("featureNum", "featureName"))
+Data1 <- rbind(testData, trainData)
 
-dtFeatures <- dtFeatures[grepl("mean\\(\\)|std\\(\\)", featureName)]
+tidyDataset2  <- aggregate( Data1[,1:562], Data1[,563:564], FUN = mean )
 
-dtFeatures$featureCode <- dtFeatures[, paste0("V", featureNum)]
-head(dtFeatures)
+write.table(tidyDataset2, file="tidyDataset2.txt", sep="\t", row.names=FALSE)
 
-dtFeatures$featureCode
-
-select <- c(key(dt), dtFeatures$featureCode)
-dt <- dt[, select, with = FALSE]
-
-dtActivityLabels <- read.table("./data/samsung/UCI HAR Dataset/activity_labels.txt")
-setnames(dtActivityNames, names(dtActivityNames), c("activityNum", "activityName"))
