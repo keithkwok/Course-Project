@@ -2,8 +2,8 @@ setwd("C:/Users/Keith/Dropbox/keith sem2/post-sem2/JHU Data Science/Getting and 
 url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
 download.file(url, destfile="./data/samsung.zip")
 
-packages <- c("data.table", "reshape2")
-sapply(packages, require, character.only=TRUE, quietly=TRUE)
+library(data.table)
+library(reshape2)
 
 SubjectTrain <- read.csv("./data/samsung/UCI HAR Dataset/train/subject_train.txt",sep="",header=FALSE)
 SubjectTest <- read.csv("./data/samsung/UCI HAR Dataset/test/subject_test.txt",sep="",header=FALSE)
